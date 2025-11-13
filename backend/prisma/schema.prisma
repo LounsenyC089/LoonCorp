@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = env("DATABASE_PROVIDER")
+  url      = env("DATABASE_URL")
+}
+
+model Service {
+  id          Int          @id @default(autoincrement())
+  nom         String
+  description String?
+  utilisateurs Utilisateur[]
+  equipements  Equipement[]
+  audits_concernes Audit[] @relation("ServiceAudite")
+}
+
+model Utilisateur {
+  id          Int          @id @default(autoincrement())
+  nomComplet  String
+  login       String       @unique
+  email       String?      @unique
+  role        String       @default("user")
+  service     Service?     @relation(fields: [serviceId], references: [id])
+  serviceId   Int?
+  equipements Equipement[]
+  maintenancesRealisees MaintenanceMensuelle[] @relation("MaintenanceRealiseePar")
+  auditsRealises Audit[] @relation("AuditAuditeur")
+  passwordHash String
+}
+
+model Equipement {
+  id                 Int              @id @default(autoincrement())
+  numeroAffichage    String
+  codeInterne        String           @unique
+  typePoste          String
+  marque             String?
+  modele             String?
+  systemeExploitation String?
+  memoire            String?
+  propriete          String?
+  dateAcquisition    DateTime?
+  dateDebutLocation  DateTime?
+  dateInventaire     DateTime?
+  etatActuel         String?
+  processeur         String?
+  disqueDur          String?
+  peripheriques      String?
+  remarques          String?
+  contratMaintenance String?
+  misesAJourHebdo    Boolean         @default(false)
+  ageCalcule         Int?
+  service            Service?        @relation(fields: [serviceId], references: [id])
+  serviceId          Int?
+  utilisateur        Utilisateur?    @relation(fields: [utilisateurId], references: [id])
+  utilisateurId      Int?
+  interventions      Intervention[]
+  audits             AuditEquipement[]
+}
+
+model Intervention {
+  id           Int        @id @default(autoincrement())
+  equipement   Equipement @relation(fields: [equipementId], references: [id])
+  equipementId Int
+  type         String
+  origine      String?
+  date         DateTime   @default(now())
+  description  String?
+  cout         Float?
+  technicien   String?
+  statut       String      @default("planifie")
+  piecesJointes PieceJointe[]
+}
+
+model Audit {
+  id                      Int                @id @default(autoincrement())
+  dateAudit               DateTime           @default(now())
+  auditeur                Utilisateur?       @relation("AuditAuditeur", fields: [auditeurId], references: [id])
+  auditeurId              Int?
+  serviceConcerne         Service?           @relation("ServiceAudite", fields: [serviceConcerneId], references: [id])
+  serviceConcerneId       Int?
+  nombreIncidents         Int                @default(0)
+  equipementsNonConformes Int                @default(0)
+  etatGlobal              String             @default("A verifier")
+  synthese                String?
+  recommandations         String?
+  rapportPdfUrl           String?
+  auditEquipements        AuditEquipement[]
+}
+
+model AuditEquipement {
+  id                   Int        @id @default(autoincrement())
+  audit                Audit      @relation(fields: [auditId], references: [id])
+  auditId              Int
+  equipement           Equipement @relation(fields: [equipementId], references: [id])
+  equipementId         Int
+  conformiteMateriel   String
+  conformiteLogiciel   String
+  conformiteSecurite   String
+  observations         String?
+}
+
+model MaintenanceMensuelle {
+  id                   Int        @id @default(autoincrement())
+  mois                 Int
+  annee                Int
+  datePlanifiee        DateTime?
+  dateEffective        DateTime?
+  realisePar           Utilisateur? @relation("MaintenanceRealiseePar", fields: [realiseParId], references: [id])
+  realiseParId         Int?
+  statut               String       @default("en_cours")
+  observationsGenerales String?
+  rapportPdfUrl        String?
+  checks               MaintenanceCheck[]
+  notifications        Notification[]
+}
+
+model MaintenanceCheck {
+  id             Int                  @id @default(autoincrement())
+  maintenance    MaintenanceMensuelle @relation(fields: [maintenanceId], references: [id])
+  maintenanceId  Int
+  tache          String
+  categorie      String?
+  statut         String       @default("a_faire")
+  commentaire    String?
+}
+
+model Notification {
+  id             Int      @id @default(autoincrement())
+  type           String
+  message        String
+  cible          String?
+  dateEnvoi      DateTime @default(now())
+  lu             Boolean  @default(false)
+  maintenance    MaintenanceMensuelle? @relation(fields: [maintenanceId], references: [id])
+  maintenanceId  Int?
+  audit          Audit?   @relation(fields: [auditId], references: [id])
+  auditId        Int?
+}
+
+model PieceJointe {
+  id             Int           @id @default(autoincrement())
+  fichierUrl     String
+  type           String?
+  intervention   Intervention? @relation(fields: [interventionId], references: [id])
+  interventionId Int?
+  audit          Audit?        @relation(fields: [auditId], references: [id])
+  auditId        Int?
+}
