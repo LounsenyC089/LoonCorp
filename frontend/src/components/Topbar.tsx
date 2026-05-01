@@ -1,7 +1,9 @@
 import {
+  Badge,
   Box,
   Flex,
   Heading,
+  HStack,
   IconButton,
   Text,
   useColorMode,
@@ -20,10 +22,12 @@ export const Topbar = ({ onOpen }: TopbarProps) => {
       as="header"
       align="center"
       justify="space-between"
-      px={6}
-      py={4}
+      px={{ base: 4, md: 8 }}
+      py={5}
       borderBottomWidth="1px"
-      bg="white"
+      borderColor="whiteAlpha.200"
+      bg="blackAlpha.400"
+      backdropFilter="blur(16px)"
       position="sticky"
       top={0}
       zIndex={10}
@@ -35,13 +39,19 @@ export const Topbar = ({ onOpen }: TopbarProps) => {
           icon={<FiMenu />}
           onClick={onOpen}
           variant="ghost"
+          color="white"
         />
         <Box>
-          <Heading size="md" color="blue.600">
-            Gestion du Parc Informatique
-          </Heading>
-          <Text fontSize="sm" color="gray.500">
-            Responsable Marketing, Communication & SI
+          <HStack spacing={3} mb={1}>
+            <Heading size="md" color="white">
+              AFENIN TECHNOLOGIES
+            </Heading>
+            <Badge colorScheme="orange" variant="solid">
+              Nouvelle expérience
+            </Badge>
+          </HStack>
+          <Text fontSize="sm" color="gray.300">
+            Fiabilité IT · Performance opérationnelle · Vision stratégique
           </Text>
         </Box>
       </Flex>
@@ -50,6 +60,7 @@ export const Topbar = ({ onOpen }: TopbarProps) => {
         icon={colorMode === 'light' ? <FiMoon /> : <FiSun />}
         onClick={toggleColorMode}
         variant="ghost"
+        color="white"
       />
     </Flex>
   );
