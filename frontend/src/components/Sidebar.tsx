@@ -4,6 +4,8 @@ import {
   DrawerContent,
   DrawerOverlay,
   Flex,
+  HStack,
+  Icon,
   Link as ChakraLink,
   Text,
   VStack,
@@ -32,10 +34,10 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', to: '/dashboard', icon: <FiHome /> },
+  { label: 'Accueil', to: '/dashboard', icon: <FiHome /> },
   { label: 'Parc Informatique', to: '/equipments', icon: <FiCpu /> },
   { label: 'Audits', to: '/audits', icon: <FiBarChart2 /> },
-  { label: 'Maintenance Mensuelle', to: '/maintenance', icon: <FiCheckSquare /> },
+  { label: 'Maintenance', to: '/maintenance', icon: <FiCheckSquare /> },
   { label: 'Interventions', to: '/interventions', icon: <FiAlertCircle /> },
   { label: 'Services', to: '/services', icon: <FiActivity /> },
   { label: 'Utilisateurs', to: '/users', icon: <FiUsers /> },
@@ -45,10 +47,27 @@ const SidebarContent = () => {
   const location = useLocation();
 
   return (
-    <Flex direction="column" h="100%" bg="white" borderRightWidth="1px" p={6}>
-      <Text fontSize="xl" fontWeight="bold" mb={8} color="blue.600">
-        LoonCorp IT Ops
-      </Text>
+    <Flex
+      direction="column"
+      h="100%"
+      bg="blackAlpha.500"
+      backdropFilter="blur(16px)"
+      borderRightWidth="1px"
+      borderColor="whiteAlpha.200"
+      p={6}
+    >
+      <Box mb={8}>
+        <Text fontSize="xs" letterSpacing="0.25em" textTransform="uppercase" color="gray.300">
+          AFENIN Technologies
+        </Text>
+        <HStack mt={2} spacing={3}>
+          <Icon as={FiCpu} color="accent.500" boxSize={5} />
+          <Text fontSize="xl" fontWeight="bold" color="white">
+            Digital Ops Center
+          </Text>
+        </HStack>
+      </Box>
+
       <VStack align="stretch" spacing={2}>
         {navItems.map((item) => {
           const active = location.pathname.startsWith(item.to);
@@ -59,14 +78,15 @@ const SidebarContent = () => {
               key={item.to}
               px={4}
               py={3}
-              borderRadius="md"
+              borderRadius="xl"
               display="flex"
               alignItems="center"
               gap={3}
-              bg={active ? 'blue.50' : 'transparent'}
-              color={active ? 'blue.600' : 'gray.600'}
-              fontWeight={active ? 'semibold' : 'medium'}
-              _hover={{ textDecoration: 'none', bg: 'blue.50', color: 'blue.600' }}
+              bg={active ? 'whiteAlpha.300' : 'transparent'}
+              color={active ? 'white' : 'gray.300'}
+              border="1px solid"
+              borderColor={active ? 'afenin.400' : 'transparent'}
+              _hover={{ textDecoration: 'none', bg: 'whiteAlpha.200', color: 'white' }}
             >
               {item.icon}
               {item.label}
@@ -80,7 +100,7 @@ const SidebarContent = () => {
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => (
   <>
-    <Box display={{ base: 'none', md: 'block' }} w="260px">
+    <Box display={{ base: 'none', md: 'block' }} w="300px">
       <SidebarContent />
     </Box>
     <Drawer isOpen={isOpen} placement="left" onClose={onClose}>

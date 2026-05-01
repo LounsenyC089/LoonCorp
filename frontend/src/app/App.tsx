@@ -14,11 +14,11 @@ const App = () => {
   const disclosure = useDisclosure();
 
   return (
-    <Flex minH="100vh" bg="gray.50">
+    <Flex minH="100vh" bg="transparent">
       <Sidebar isOpen={disclosure.isOpen} onClose={disclosure.onClose} />
       <Flex direction="column" flex="1">
         <Topbar onOpen={disclosure.onOpen} />
-        <Box as="main" flex="1" p={6} overflowY="auto">
+        <Box as="main" flex="1" p={{ base: 4, md: 8 }} overflowY="auto">
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<DashboardPage />} />
